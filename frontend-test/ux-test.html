@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NOVEAM UI/UX Local Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: #f3f6f8;
+      color: #172b4d;
+    }
+    body.dark {
+      background: #101827;
+      color: white;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+    .feed {
+      display: grid;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .post {
+      padding: 20px;
+      border: 1px solid #8492a6;
+      border-radius: 12px;
+    }
+    button, select {
+      padding: 12px;
+      margin: 6px 4px 6px 0;
+    }
+    #result {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>NOVEAM UI/UX Engine</h1>
+    <p>Local frontend integration test</p>
+
+    <label for="device">Device:</label>
+    <select id="device">
+      <option value="desktop">Desktop</option>
+      <option value="tablet">Tablet</option>
+      <option value="mobile">Mobile</option>
+    </select>
+
+    <label for="theme">Theme:</label>
+    <select id="theme">
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+
+    <button id="testButton">Test Personalization</button>
+
+    <h2>Sample NOVEAM Feed</h2>
+    <div class="feed" id="feed">
+      <article class="post">NOVEAM Community Post</article>
+      <article class="post">NOVEAM Gaming Post</article>
+      <article class="post">NOVEAM Creator Post</article>
+    </div>
+
+    <h2>API Response</h2>
+    <pre id="result">Click Test Personalization.</pre>
+  </main>
+
+  <script>
+    document.getElementById("testButton").addEventListener("click", async () => {
+      const device = document.getElementById("device").value;
+      const theme = document.getElementById("theme").value;
+      const result = document.getElementById("result");
+
+      result.textContent = "Loading...";
+
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:8001/api/ux/ai/personalize",
+          {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+              device,
+              theme,
+              reduced_motion: false,
+              high_contrast: false,
+              experience_level: "returning"
+            })
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status);
+        }
+
+        const data = await response.json();
+        const recommendations = data.recommendations;
+
+        document.body.classList.toggle(
+          "dark",
+          recommendations.theme === "dark"
+        );
+
+        document.getElementById("feed").style.gridTemplateColumns =
+          `repeat(${recommendations.feed_columns}, minmax(0, 1fr))`;
+
+        result.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        result.textContent = "API error: " + error.message;
+      }
+    });
+  </script>
+</body>
+</html>

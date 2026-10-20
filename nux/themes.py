@@ -1,0 +1,1 @@
+﻿THEMES = {"light": {"background": "#f3f6f8", "surface": "#ffffff", "text": "#172b3a", "primary": "#12395b"}, "dark": {"background": "#101820", "surface": "#1d2935", "text": "#f5f7fa", "primary": "#80bfff"}}; get_theme = lambda name="light": {"name": name if name in THEMES else "light", "tokens": THEMES.get(name, THEMES["light"])}

@@ -1,0 +1,1 @@
+﻿from pydantic import BaseModel, Field; exec("class AccessibilityPreferences(BaseModel):\n    high_contrast: bool = False\n    reduced_motion: bool = False\n    font_scale: float = Field(default=1.0, ge=0.8, le=2.0)\n    keyboard_navigation: bool = True"); get_accessibility_defaults = lambda: AccessibilityPreferences()
