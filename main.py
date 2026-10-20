@@ -1,4 +1,5 @@
-﻿from fastapi import FastAPI
+﻿from nux.device_engine import router as device_router
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from nux.themes import get_theme
 from nux.accessibility import get_accessibility_defaults
@@ -90,3 +91,6 @@ from nux.ai_personalization import AIPersonalizationRequest, recommend_experienc
 @app.post("/api/ux/ai/personalize")
 def ai_personalize(data: AIPersonalizationRequest):
     return recommend_experience(data)
+
+app.include_router(device_router)
+
